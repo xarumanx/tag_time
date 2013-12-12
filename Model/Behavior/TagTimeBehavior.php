@@ -7,7 +7,7 @@
 
 class TagTimeBehavior extends ModelBehavior {
 
-	function setup(&$Model, $settings = array()) {
+	function setup(Model $Model, $config = array()) {
 		$default = array(
 			'assoc_classname' => 'Tag',
 			'tag_field' => 'tag',
@@ -15,14 +15,14 @@ class TagTimeBehavior extends ModelBehavior {
 			'clear_model' => false,
 		);
 
-		if (empty($settings)) {
-			$settings = $default;
+		if (empty($config)) {
+			$config = $default;
 		}
 
-		$this->settings = array_merge($default, $settings);
+		$this->settings = array_merge($default, $config);
 	}
 
-	function afterFind(&$Model, $results, $primary = false) {
+	function afterFind(Model $Model, $results, $primary = false) {
 		extract($this->settings);
 		if (!empty($results)) {
 			foreach ($results as $key => &$result) {
@@ -42,7 +42,7 @@ class TagTimeBehavior extends ModelBehavior {
 		return $results;
 	}
 
-	function beforeValidate(&$Model) {
+	function beforeValidate(Model $Model, $options = array()) {
 		extract($this->settings);
 		foreach ($Model->hasAndBelongsToMany as $assoc_key => $assoc_model) {
 			$tagIds = array();
@@ -62,7 +62,7 @@ class TagTimeBehavior extends ModelBehavior {
     return parent::beforeValidate($Model);
 	}
 
-	function _getTagIds($assoc_key, $assoc_model, &$Model) {
+	function _getTagIds($assoc_key, $assoc_model, $Model) {
 
 		extract($this->settings);
 		$tags = explode($separator, $Model->data[$assoc_key][Inflector::pluralize($tag_field)]);
